@@ -1,9 +1,10 @@
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import axiosClient from "../axios-client";
 import { useStateContext } from "../contexts/ContextProvider";
 
 export default function Signin() {
+    const [errors, setErrors] = useState(null);
     const nameRef = useRef();
     const emailRef = useRef();
     const passwordRef = useRef();
@@ -32,13 +33,22 @@ export default function Signin() {
                 // Getting errors comming from the server
                 const response = err.response;
                 if (response && response.status === 422) {
-                    console.log(response.data.errors);
+                    setErrors(response.data.errors);
                 }
             });
     };
     return (
         <form onSubmit={onSubmit}>
             <h1 className="title">Signup for free</h1>
+            {/* Handling Input Validation */}
+            {errors && (
+                <div className="alert">
+                    {Object.keys(errors).map((key) => (
+                        <p key={key}>{errors[key][0]}</p>
+                    ))}
+                </div>
+            )}
+            {/* Form inputs */}
             <input ref={nameRef} type="text" placeholder="Full Name" />
             <input ref={emailRef} type="email" placeholder="Email Address" />
             <input
@@ -46,14 +56,12 @@ export default function Signin() {
                 type="password"
                 name=""
                 placeholder="Password"
-                id=""
             />
             <input
                 ref={passwordConfirmRef}
                 type="password"
                 name=""
                 placeholder="Password Confirmation"
-                id=""
             />
             <button className="btn btn-block">Signup</button>
             <p className="message">

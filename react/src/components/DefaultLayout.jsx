@@ -1,8 +1,10 @@
+import { useEffect } from "react";
 import { Navigate, Outlet, Link } from "react-router-dom";
+import axiosClient from "../axios-client";
 import { useStateContext } from "../contexts/ContextProvider";
 
 export default function DefaultLayout() {
-    const { user, token } = useStateContext();
+    const { user, token, setUser } = useStateContext();
 
     // Check is the user logged in and the token is valid
     if (!token) {
@@ -14,6 +16,12 @@ export default function DefaultLayout() {
     const onlogout = (ev) => {
         ev.preventDefault();
     };
+
+    useEffect(() => {
+        axiosClient.get("/user").then(({ data }) => {
+            setUser(data);
+        });
+    });
 
     return (
         <div id="defaultLayout">
